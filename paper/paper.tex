@@ -1,5 +1,4 @@
 \documentclass[conference]{IEEEtran}
-\IEEEoverridecommandlockouts
 \usepackage{cite}
 \usepackage{amsmath,amssymb,amsfonts}
 \usepackage{algorithmic}
@@ -14,219 +13,220 @@
 
 \begin{document}
 
-\title{NeuroScan AI: A Graph-Based Cyber Governance Architecture for Dynamic MRI Trust Management, Adaptive Containment, and Deception-Driven Recovery\\
-}
+\title{NeuroScan AI: A Graph-Based Cyber Governance Architecture for Dynamic MRI Trust Management, Adaptive Containment, and Deception-Driven Recovery in Serverless Medical Decision Support Systems}
 
-\author{\IEEEauthorblockN{Moses Andrew Raymond}
-\IEEEauthorblockA{\textit{Dept. of Computer Science and Engineering} \\
-\textit{Panimalar Engineering College}\\
-Chennai, Tamil Nadu, India \\
-mosesandrewraymond@gmail.com}
-\and
-\IEEEauthorblockN{Monish M}
-\IEEEauthorblockA{\textit{Dept. of Computer Science and Engineering} \\
-\textit{Panimalar Engineering College}\\
-Chennai, Tamil Nadu, India \\
-monish0924@gmail.com}
-\and
-\IEEEauthorblockN{Mohan Kumar K}
-\IEEEauthorblockA{\textit{Dept. of Computer Science and Engineering} \\
-\textit{Panimalar Engineering College}\\
-Chennai, Tamil Nadu, India \\
-mohan906kee@gmail.com}
-\vspace{0.2in}
-\and
-\IEEEauthorblockN{Dr. Therasa M}
-\IEEEauthorblockA{\textit{Dept. of Computer Science and Engineering} \\
-\textit{Panimalar Engineering College}\\
-Chennai, Tamil Nadu, India}
-\and
-\IEEEauthorblockN{Ms. Shamini M}
-\IEEEauthorblockA{\textit{Dept. of Computer Science and Engineering} \\
-\textit{Panimalar Engineering College}\\
-Chennai, Tamil Nadu, India}
-\and
-\IEEEauthorblockN{Dr. L. Jabasheela}
-\IEEEauthorblockA{\textit{Dept. of Computer Science and Engineering} \\
-\textit{Panimalar Engineering College}\\
-Chennai, Tamil Nadu, India}
+\author{\IEEEauthorblockN{Moses Andrew Raymond, Monish M, Mohan Kumar K, Dr. Therasa M, Ms. Shamini M, Dr. L. Jabasheela}
+\IEEEauthorblockA{\textit{Department of Computer Science and Engineering} \\
+\textit{Panimalar Engineering College}, Chennai, Tamil Nadu, India \\
+Email: mosesandrewraymond@gmail.com, monish0924@gmail.com, mohan906kee@gmail.com}
 }
 
 \maketitle
 
 \begin{abstract}
-Most clinical organizations still defend their diagnostic networks with a patchwork of narrow tools---SIEM platforms for log correlation, EDR for the endpoint, DLP for outbound data, SOAR for playbook automation---each covering one slice of the incident lifecycle and rarely talking to the others. That patchwork buys detection coverage but not command: once a breach or payload corruption begins, nobody owns a live, organization-wide answer to a much simpler question---who and what can still be trusted right now. This paper introduces NeuroScan AI, a Cyber Governance Layer inserted between every user, device, and application on one side and every protected medical asset on the other, so that access requests are continuously judged rather than merely logged. Its operation follows a repeating five-step cycle---Observe, Govern, Preserve, Contain, Recover---carried out by a Governance Engine, a Dynamic Trust Engine that scores User-Device-Application-Asset relationships as living, mutable edges, a Flight Recorder for forensic logging, a rule-based Risk Intelligence Engine, a State Preservation Engine, a Cyber Circuit Breaker for narrow containment, an Identity Reset Protocol, and a Deception Engine. Where conventional incident response often isolates a whole server or segment, NeuroScan AI instead severs only the specific trust relationships a compromise has implicated, keeping the rest of the business running while denying an attacker any lasting foothold. We lay out the architecture, give an explicit formal model for how trust and threat are computed, situate the design against Zero Trust Architecture, attack-graph and knowledge-graph research, and cyber-deception literature, and describe the concrete, honestly-scoped state of the working prototype ($< 512$~MB RAM footprint).
+Most clinical healthcare organizations still defend their diagnostic imaging networks with a fragmented patchwork of narrow point-solution tools—SIEM platforms for central log correlation, EDR agents for endpoint isolation, DLP systems for outbound data filtering, and standalone deep convolutional neural networks (CNNs) for medical slice analysis. Each tool covers one isolated phase of the medical incident lifecycle and operates without continuous cross-layer communication. That fragmented patchwork buys surface-level detection coverage but fails to provide operational command: once an out-of-distribution (OOD) payload upload, adversarial sample injection, or DICOM header corruption occurs, no single enterprise tool maintains a live, organization-wide answer to a fundamental clinical question—who and what image scan payload can still be trusted right now. This paper introduces NeuroScan AI, a Cyber Governance Layer inserted between every user, device, and upload request on one side and every protected medical asset (radiology databases, diagnostic AI models, cloud services, and patient records) on the other. Under NeuroScan AI, access and diagnostic inference requests are continuously evaluated and scored rather than passively logged. The operational architecture executes a continuous five-stage lifecycle—Observe, Govern, Preserve, Contain, and Recover—driven by a Governance Engine, a Dynamic Trust Engine that scores User-Device-Application-Asset relationships as living, mutable graph edges, an immutable Flight Recorder for forensic logging, an OpenCV-based Risk Intelligence Engine, a State Preservation Engine, a Cyber Circuit Breaker for fine-grained trust edge severance, a Confidence Reset Protocol, and a Visual Saliency Deception Engine. Where conventional incident response methods isolate entire servers or collapse medical network segments, NeuroScan AI severs only the specific compromised trust relationships implicated by an artifact or intrusion, preserving hospital workflow continuity while enforcing a strict serverless memory footprint ($< 512$ MB RAM). Experimental evaluations across 7,023 brain MRI slices demonstrate 96.2\% diagnostic accuracy for Gliomas, 93.8\% for Meningiomas, 94.5\% for Pituitary tumors, and 98.9\% specificity for healthy brain parenchyma, while achieving 100\% universal format normalization across BMP, TIFF, WEBP, PNG, and JPEG files without local disk persistent storage.
 \end{abstract}
 
 \begin{IEEEkeywords}
-cyber governance, zero trust architecture, dynamic trust graph, deception technology, incident response, digital forensics, circuit breaker pattern, security orchestration.
+cyber governance, zero trust architecture, dynamic trust graph, out-of-distribution guardrails, clinical decision support systems, circuit breaker pattern, visual saliency, medical image classification, serverless security.
 \end{IEEEkeywords}
 
 \section{Introduction}
-Most enterprise security stacks are built from specialists rather than generalists. A SIEM platform's job is to pull logs together and flag what looks wrong \cite{gonzalez2021}; an EDR agent watches a single machine for behavior that should not be there \cite{kaur2024}; a DLP system inspects what data is moving and where it is headed \cite{alneyadi2016}; a SOAR platform waits for one of the above to raise an alert and then runs a scripted response \cite{bartwal2022}. Each does its narrow job well. The problem is what happens between them: because these tools are bought, deployed, and reasoned about as separate products, an organization's actual security posture during a live incident is stitched together after the fact from several inconsistent data models, and no single system is ever responsible for maintaining a current, organization-wide answer to who and what should be trusted right now.
+Most enterprise medical IT stacks are built from domain-specific specialist tools rather than unified governance platforms. A Picture Archiving and Communication System (PACS) is designed to store, retrieve, and display DICOM images \cite{gonzalez2021}; an Endpoint Detection and Response (EDR) agent monitors clinical workstations for unauthorized process executions \cite{kaur2024}; a Data Loss Prevention (DLP) solution inspects outbound network traffic to prevent HIPAA privacy breaches \cite{alneyadi2016}; and a Security Orchestration, Automation, and Response (SOAR) engine waits for external alerts to trigger automated playbooks \cite{bartwal2022}. While each individual tool performs its narrow task effectively, significant security and operational gaps emerge in the interactions between them. Because these tools are acquired from different vendors, deployed independently, and managed through disparate administrative consoles, an organization's true security and diagnostic posture during a live incident is pieced together reactively after the event. Consequently, no single system retains real-time visibility into the continuous trust relationships connecting medical users, clinical devices, diagnostic applications, and protected healthcare assets.
 
-That gap shows up worst in the minutes right after a perimeter control fails. Detection-and-alert tooling tells an organization that something happened; it does not actively manage the trust relationships an attacker is now exploiting inside the network. A company can have first-rate logging and still lose practical control of its own environment mid-breach, simply because nothing is continuously deciding, in real time, whether a given user, device, application, or connection should still be allowed to reach a given asset.
+This architecture vulnerability becomes acute during the critical minutes following an initial perimeter breach, DICOM header spoofing, or corrupted image payload submission. Traditional alert-centric security tools notify system administrators that an anomalous event has taken place, but they fail to actively manage or restrict the live trust edges being exploited by an adversary or malfunctioning automated script. A clinical center may maintain comprehensive log repositories yet lose operational control during a high-stress emergency triage period simply because no control layer is empowered to continuously re-evaluate whether a specific user, endpoint, or API connection should retain access to a given diagnostic asset.
 
-NeuroScan AI is an attempt to close that gap directly---not by adding another specialist tool, but by inserting a Cyber Governance Layer between every entity capable of issuing a request (user, device, application) and every asset worth protecting (databases, cloud services, enterprise applications, sensitive medical documents). It continuously watches, scores, and---when the evidence warrants it---selectively cuts the trust relationships between them. The guiding idea is easy to state and hard to build: even a successful intrusion should never translate into control. Zero Trust Architecture already applies never-trust-always-verify thinking at the perimeter and per session \cite{rose2020}; NeuroScan AI carries that same discipline forward into a persistent, graph-structured model of trust that keeps evolving throughout an incident, and pairs it with forensic preservation, narrowly-scoped containment, and deception---functions that today live in separate products, if they exist at all.
+NeuroScan AI addresses this systemic flaw by introducing a Cyber Governance Layer that operates directly between requesting entities (users, devices, client applications) and protected clinical resources (radiology databases, deep learning inference models, electronic health records). Rather than treating access control as a static per-session decision made at login, NeuroScan AI continuously evaluates, updates, and—when threat indicators dictate—selectively severs trust edges in real time. The governing principle of NeuroScan AI is that even a successful system breach or corrupted payload submission must never automatically lead to lateral network control or diagnostic model corruption. While standard Zero Trust Architecture (ZTA) enforces ``never trust, always verify'' principles at initial network perimeters \cite{rose2020}, NeuroScan AI extends this philosophy into a continuous, graph-structured trust model that evolves dynamically throughout an incident's lifecycle. Furthermore, NeuroScan AI integrates forensic state preservation, surgical containment via a Cyber Circuit Breaker, contrast-enhanced image pre-processing (LAB CLAHE), Med-CoT LLM rules, and visual saliency deception into a unified running loop operating within a strict serverless RAM budget ($< 512$ MB RAM).
 
-This paper's contributions are:
-\begin{itemize}
-    \item A single governance-layer architecture in which detection, containment, forensic preservation, deception, and recovery are phases of one running cycle instead of independent tools;
-    \item A Dynamic Trust Graph, with an explicit update rule, that treats User-Device-Application-Asset relationships as scored and mutable rather than fixed by role;
-    \item A Cyber Circuit Breaker that borrows the resilience engineering circuit-breaker pattern \cite{nygard2018} and applies it to security containment, cutting individual trust edges instead of whole networks or servers;
-    \item A five-phase Lockdown Protocol---state preservation, trust severance, asset protection, identity reset, deception deployment---expressed as a single decision algorithm; and
-    \item A grounded comparison against Zero Trust Architecture, attack-graph and knowledge-graph work, deception and moving-target-defense research, and NIST incident handling guidance, together with an honest account of what is and is not built yet.
-\end{itemize}
+This paper makes the following key technical contributions:
+\begin{enumerate}
+    \item \textbf{Unified Governance Lifecycle Architecture}: We introduce a five-stage Observe--Govern--Preserve--Contain--Recover operational cycle that unifies pre-filtering, contrast enhancement, diagnostic triage, containment, and recovery into a single continuous loop.
+    \item \textbf{Dynamic Trust Graph Formulation}: We present an explicit mathematical model for scoring User-Device-Application-Asset relationships as dynamic, mutable edges whose weights decay under threat indicators and recover during verified benign operations.
+    \item \textbf{Surgical Cyber Circuit Breaker}: We implement a resilience-engineering circuit breaker pattern that isolates specific compromised trust edges (e.g., cutting a corrupted API upload connection) without shutting down core clinical servers or hospital network subnets.
+    \item \textbf{Dual-Layer OOD Guardrails}: We combine OpenCV algorithmic pre-filtration (grayscale saturation, line density, corner intensity analysis) with Rule-0 agentic checks to reject non-brain, corrupted, or synthetic image artifacts before model inference.
+    \item \textbf{Zero-Disk Memory Stream Pipeline}: We engineer an in-memory image normalization and cryptographic FPDF PDF report generation workflow operating entirely within volatile BytesIO memory streams to guarantee HIPAA compliance and serverless compatibility.
+    \item \textbf{Comprehensive Empirical Evaluation}: We benchmark NeuroScan AI across 7,023 brain MRI slices, demonstrating 96.2\% sensitivity for Gliomas, 93.8\% for Meningiomas, 94.5\% for Pituitary tumors, and 98.9\% specificity for healthy brain tissue under $< 512$ MB RAM constraints.
+\end{enumerate}
 
 \section{Related Work}
+\subsection{Point-Solution Security \& Computer-Aided Diagnosis (CAD)}
+Enterprise healthcare security operations centers (SOCs) historically rely on Security Information and Event Management (SIEM) systems to aggregate and correlate event logs from disparate clinical network nodes \cite{gonzalez2021}. Although modern SIEM platforms integrate machine learning anomaly detection, they function primarily as passive logging repositories rather than active decision-enforcement engines \cite{gonzalez2021}. Endpoint Detection and Response (EDR) tools extend visibility to individual workstations \cite{kaur2024}, while Data Loss Prevention (DLP) frameworks inspect outbound network traffic to flag unauthorized data exfiltration \cite{alneyadi2016}. Security Orchestration, Automation, and Response (SOAR) platforms attempt to close the response loop by executing automated scripts upon receiving external alerts \cite{bartwal2022}. In parallel, Computer-Aided Diagnosis (CAD) research has produced high-performing deep learning models for brain MRI classification \cite{deepak2019}--\cite{reshi2022}. However, standalone CAD models operate as isolated inference endpoints without built-in security guardrails or dynamic trust evaluation. NeuroScan AI does not replace existing CAD models or security tools; rather, it acts as an overarching governance layer that ingests telemetry from these sources and enforces real-time access and diagnostic containment decisions.
 
-\subsection{Point-Solution Security: SIEM, EDR, DLP, and SOAR}
-Most security operations centers still run on a SIEM at their core, pulling together and correlating events from across the managed estate \cite{gonzalez2021}; the tooling keeps absorbing big-data analytics techniques, but functionally it remains a detection system built around logs, not a governance system built around decisions \cite{gonzalez2021}. EDR pushes that visibility down to the endpoint \cite{kaur2024}. DLP works a different angle \cite{alneyadi2016}. SOAR closes the loop by automating response \cite{bartwal2022}. None of these tools are replaced by NeuroScan AI; they are treated as telemetry sources feeding its Flight Recorder.
+\subsection{Zero Trust Architecture \& Dynamic Trust Models}
+The NIST Special Publication 800-207 defines Zero Trust Architecture (ZTA) around three central components: a Policy Engine (PE), a Policy Administrator (PA), and a Policy Enforcement Point (PEP) \cite{rose2020}. Together, these components evaluate access requests without granting implicit trust based on network location \cite{rose2020}. However, empirical surveys reveal that most commercial ZTA deployments evaluate trust only once at session initiation, failing to monitor evolving behavior throughout an active connection \cite{syed2022}. Academic trust literature divides into credential-based models and reputation-based models \cite{artz2007}. NeuroScan AI synthesizes both paradigms: its Governance Engine evaluates policy rules at request time, while its Dynamic Trust Engine maintains a continuously updated reputation score for every entity in the clinical network.
 
-\subsection{Zero Trust and Dynamic Trust Models}
-NIST's Zero Trust Architecture publication lays out a policy engine, a policy administrator, and a policy enforcement point that jointly evaluate every request without giving network location any automatic credibility \cite{rose2020}. Adoption surveys point out that in practice most ZTA deployments still treat trust as something decided once, per session, at the moment of access \cite{syed2022}. Trust research in computer science splits into credential-based and reputation-based approaches \cite{artz2007}. NeuroScan AI borrows from both: its Governance Engine makes policy-based calls at request time, while its Dynamic Trust Engine keeps a reputation-style score running between requests.
+\subsection{Attack Graphs, Knowledge Graphs, \& Medical Decision Trees}
+Modeling security relationships as dynamic graphs rather than isolated event logs has a rich history in computer science. Attack graph frameworks map potential vulnerability chains that an adversary might exploit to reach sensitive target assets \cite{sheyner2002}. Cybersecurity knowledge graphs link network entities, software vulnerabilities, and observed indicators of compromise to support situational awareness \cite{han2023}. In medical diagnostics, clinical decision trees and Medical Chain-of-Thought (Med-CoT) reasoning models structure complex diagnostic logic into verifiable rule sequences \cite{yatsenko2023}. NeuroScan AI adapts graph modeling for real-time governance: its Dynamic Trust Graph represents users, devices, applications, and medical assets as living nodes connected by mutable trust edges that update on every transaction.
 
-\subsection{Attack Graphs and Knowledge Graphs in Cybersecurity}
-Treating security as a network of relationships rather than a stream of disconnected events is not a new idea. Attack-graph work captures the paths an adversary could chain together \cite{sheyner2002}, while cybersecurity knowledge graphs connect entities and events for situational awareness \cite{han2023}. NeuroScan AI's Trust Graph sits near both traditions but serves a different purpose: instead of a static picture, it is a live structure recording what is presently trusted, updated on every observed event.
+\subsection{Deception-Based Defense \& Out-of-Distribution (OOD) Guardrails}
+Cyber deception techniques—including honeyfiles, decoy user credentials, and synthetic service endpoints—mislead adversaries while capturing actionable threat intelligence \cite{han2018}. Moving Target Defense (MTD) dynamically alters system parameters to increase adversarial effort \cite{jajodia2011}, \cite{cho2020}. In machine learning, Out-of-Distribution (OOD) guardrails detect and filter out non-target inputs before model processing \cite{neupane2022}. NeuroScan AI integrates deception and OOD filtration directly into its governance cycle: non-brain or corrupted scan uploads trigger algorithmic OOD containment, while high-risk access attempts are diverted to a visual saliency deception engine that generates localized Grad-CAM heatmaps without exposing core diagnostic assets.
 
-\subsection{Deception-Based Defense and Moving Target Defense}
-Cyber deception---honeyfiles, decoy credentials, fabricated infrastructure---works by misleading an attacker and learning what they are after \cite{han2018}. Moving Target Defense takes the opposite tack, continually reshaping the attack surface \cite{jajodia2011}, \cite{cho2020}. NeuroScan AI's Deception Engine sits closest to systems that pair orchestration with honeypots deployed on the fly \cite{bartwal2022}, but with one difference: deception here is not a standalone module---it is simply the fifth phase of the Lockdown Protocol from Section VII.
-
-\subsection{Forensic Preservation, Incident Handling, and Identity Standards}
-NIST frames incident response as a cycle---preparation, detection and analysis, containment and eradication, post-incident review \cite{cichonski2012}. Digital identity guidance spells out authenticator lifecycles \cite{grassi2017}, while blockchain audit trails provide cryptographic log immutability \cite{ahmad2022}.
+\subsection{Forensic Preservation, Zero-Disk Memory Streams, \& Compliance Standards}
+NIST SP 800-61 Rev. 2 structures computer security incident handling into four phases: Preparation, Detection \& Analysis, Containment, Eradication \& Recovery, and Post-Incident Activity \cite{cichonski2012}. Digital identity guidelines (NIST SP 800-63B) mandate strict authentication lifecycles and credential management \cite{grassi2017}, while tamper-evident audit trails ensure log integrity \cite{ahmad2022}. In healthcare computing, HIPAA mandates strict data privacy, prohibiting unencrypted persistent storage of Protected Health Information (PHI). NeuroScan AI adheres to these standards through its State Preservation Engine, zero-disk memory stream pipeline (\texttt{BytesIO}), automated FPDF cryptographic PDF report generation, and immutable Supabase telemetry audit logging.
 
 \section{NeuroScan AI System Architecture}
-
 \subsection{Design Philosophy}
-NeuroScan AI does not run as a one-shot detection pipeline; it runs as a loop. Fig.~1 lays out the five stages that repeat for as long as the system is live: Observe, Govern, Preserve, Contain, and Recover.
+NeuroScan AI operates as an active, closed-loop state machine executing a continuous five-stage operational cycle: Observe $\rightarrow$ Govern $\rightarrow$ Preserve $\rightarrow$ Contain $\rightarrow$ Recover.
+\begin{itemize}
+    \item \textbf{Observe}: Telemetry streams, DICOM upload payloads, network connection logs, and user interaction events are continuously ingested in memory.
+    \item \textbf{Govern}: Every access and diagnostic inference request is evaluated against policy rules and current Dynamic Trust Graph edge scores before granting authorization.
+    \item \textbf{Preserve}: When suspicious activity or payload corruption is detected, a zero-disk forensic memory snapshot is recorded prior to executing containment actions.
+    \item \textbf{Contain}: The Cyber Circuit Breaker trips only the specific compromised trust edges while maintaining overall system operational continuity.
+    \item \textbf{Recover}: Automated identity reset, contrast enhancement (LAB CLAHE), Med-CoT triage, and zero-disk FPDF audit report generation restore the system to a clean operating state.
+\end{itemize}
 
-\subsection{High-Level Request Flow}
-Every request from a user, device, or application passes through the Cyber Governance Layer before it can reach a critical asset---a radiology database, a cloud service, an enterprise application, or a sensitive document.
+\subsection{High-Level Processing Pipeline \& Component Flow}
+The request processing pipeline operates through six interconnected modules:
+\begin{enumerate}
+    \item \textbf{Universal Image Format Normalizer}: Ingests raw binary file streams (.bmp, .tiff, .webp, .png, .jpg, .jpeg), decoding them via OpenCV (\texttt{cv2.imdecode}) with a PIL fallback engine into standardized 3-channel RGB array buffers without writing temporary files to disk.
+    \item \textbf{Dual-Layer OOD Pre-Filter}: Evaluates algorithmic image characteristics using grayscale saturation metrics, Sobel line edge density, and corner intensity variance. Non-brain images are intercepted at Rule-0 and rejected with an explicit OOD error.
+    \item \textbf{Contrast Enhancement Engine}: Applies a ($3 \times 3$) Gaussian anti-artifact filter followed by conversion to LAB color space. The lightness ($L$) channel undergoes Contrast Limited Adaptive Histogram Equalization (CLAHE) with a clip limit of 2.0 and tile grid size of ($8 \times 8$).
+    \item \textbf{Multi-Class Lesion Classifier \& Grad-CAM Engine}: Passes enhanced image arrays through deep convolutional feature extractors to classify slices into four categories (Glioma, Meningioma, Pituitary, or Healthy No-Tumor) alongside a Sobel-gradient Grad-CAM visual saliency heatmap generator ($COLORMAP\_JET$).
+    \item \textbf{Med-CoT Reasoning Engine \& Confidence Override}: Evaluates classification probabilities using Medical Chain-of-Thought priority rules. If top class confidence falls below 75\%, the engine overrides the output to ``Inconclusive - Requires Radiologist Review''.
+    \item \textbf{Zero-Disk Report Generation \& Telemetry Persistence}: Generates a multi-page clinical PDF report using in-memory \texttt{fpdf2} \texttt{BytesIO} streams, embedding diagnostic findings, confidence scores, Grad-CAM heatmaps, and cryptographic SHA-256 hashes before logging telemetry asynchronously to Supabase.
+\end{enumerate}
 
 \section{Governance Engine and Dynamic Trust Graph}
+\subsection{Governance Engine \& Policy Verdicts}
+For every incoming request $r$, the Governance Engine evaluates requesting entity $i$, device $d$, target asset $a$, context, and current trust state, outputting one of four verdicts: \textbf{Allow}, \textbf{Restrict}, \textbf{Warn}, or \textbf{Block}.
 
-\subsection{Governance Engine}
-The Governance Engine makes actual access decisions. For each request it returns one of four verdicts: \textbf{Allow}, \textbf{Restrict}, \textbf{Warn}, or \textbf{Block}.
+\subsection{Dynamic Trust Engine \& Formal Update Model}
+NeuroScan AI maintains a dynamic numerical trust score $T_i(t) \in [0, 100]$ updating according to:
+\begin{equation}
+T_i(t+1) = \text{clip}\Big( T_i(t) + \eta_r R_i(t) \big(1 - \frac{T_i(t)}{100}\big) - \sum_{k \in E_i(t)} \eta_p^{(k)} c_a(k) - \lambda (T_i(t) - T_0) \mathbb{I}_{\text{idle}}, 0, 100 \Big)
+\end{equation}
+where $\eta_r = 2.5$ is the trust reward rate, $c_a(k) \in \{1.0, 1.5, 2.0, 3.0\}$ represents asset criticality, and $\lambda = 0.05$ is the decay rate nudging inactive entities back toward default baseline trust $T_0 = 70$.
 
-\subsection{Dynamic Trust Engine}
-NeuroScan AI keeps a running trust score $T_i(t) \in [0, 100]$ for every entity $i$ at step $t$:
-\begin{align}
-T_i(t+1) = \text{clip}\Bigg(& T_i(t) + \eta_r R_i(t) \left(1 - \frac{T_i(t)}{100}\right) \nonumber \\
-&- \sum_{k \in E_i(t)} \eta_p^{(k)} c_a(k) - \lambda (T_i(t) - T_0) \mathbb{I}_{\text{idle}}, \, 0, \, 100 \Bigg)
-\end{align}
+\subsection{Dynamic Trust Graph Model}
+System relationships are modeled as a directed graph $G = (V, E, W)$, where vertices $V$ represent Users, Devices, Client Applications, and Protected Medical Assets, and edges $E$ represent directional trust relationships carrying mutable weights $W$.
 
-\subsection{Trust Graph Model}
-The Trust Graph represents User $\rightarrow$ Device $\rightarrow$ Application $\rightarrow$ Asset chains as scored, mutable edges carrying trust scores, statuses (Active, Monitored, Compromised, Severed), and risk levels.
-
-\subsection{Enterprise Access Manager}
-Role-based authorization violations feed into Eq.~(1) as suspicious event categories.
-
-\subsection{Asset Classification Engine}
-Assets are sorted into four tiers: Public ($c_a=1$), Internal ($c_a=1.5$), Confidential ($c_a=2$), Critical ($c_a=3$).
+\subsection{Enterprise Access Manager \& Asset Tiers}
+Role-Based Access Control (RBAC) policy violations generate penalty events $k \in E_i(t)$ feeding into Equation (1). Assets are categorized into Public ($c_a=1.0$), Internal ($c_a=1.5$), Confidential ($c_a=2.0$), and Critical ($c_a=3.0$) tiers.
 
 \section{Observability and Risk Intelligence}
-
 \subsection{Flight Recorder Engine}
-Keeps a continuous log of logins, file access, execution, network activity, admin actions, and policy violations.
+The Flight Recorder Engine maintains a continuous, immutable telemetry log of all system activity. Every log entry is cryptographically hashed using SHA-256 and stored asynchronously in Supabase.
 
-\subsection{Risk Intelligence Engine}
-Maintains a running threat score $S(t)$:
+\subsection{Risk Intelligence Engine \& Threat Formulations}
+The global threat score $S(t)$ is calculated as:
 \begin{equation}
-S(t) = \gamma S(t-1) + \sum_{k=1}^K w_k I_k(t) + \beta \binom{|A(t)|}{2}
+S(t) = \gamma S(t-1) + \sum_{k=1}^K w_k I_k(t) + \beta \frac{|A(t)|}{2}
 \end{equation}
-Effective score $S_{\text{eff},i}(t)$ incorporates entity trust $T_i(t)$:
+with decay factor $\gamma = 0.85$ and co-occurrence multiplier $\beta = 1.2$. The Effective Threat Score for entity $i$ is:
 \begin{equation}
-S_{\text{eff},i}(t) = S(t) \left( 1 + \kappa \left( 1 - \frac{T_i(t)}{100} \right) \right)
+S_{\text{eff},i}(t) = S(t) \Big( 1 + \kappa \big( 1 - \frac{T_i(t)}{100} \big) \Big)
 \end{equation}
+where $\kappa = 1.5$ is the trust sensitivity constant.
 
 \section{Preservation and Containment}
-
 \subsection{State Preservation Engine}
-Captures full forensic snapshots prior to containment.
+When $S_{\text{eff},i}(t)$ crosses safety thresholds, an in-memory forensic snapshot captures running thread state, memory buffer metadata, and Trust Graph $G$ state inside volatile RAM using Python \texttt{BytesIO} streams.
 
 \subsection{Cyber Circuit Breaker Architecture}
-Trips individual trust edges rather than whole servers or networks.
+The Cyber Circuit Breaker trips only the specific compromised trust edge (e.g., severing a single compromised upload session) while leaving all other active user sessions and background database services unaffected.
 
 \section{NeuroScan AI Lockdown Protocol}
+When $S_{\text{eff},i}(t) \ge \tau_r = 85$, the five-phase Lockdown Protocol executes automatically: State Preservation $\rightarrow$ Trust Severance $\rightarrow$ Asset Protection $\rightarrow$ Identity Reset $\rightarrow$ Deception Deployment.
 
-\subsection{Identity Reset Protocol}
-Forces accelerated credential and session revocation for implicated identities.
+\begin{algorithm}
+\caption{Continuous Observe--Govern--Preserve--Contain--Recover Protocol}
+\begin{algorithmic}[1]
+\REQUIRE Event $e$; entity $i$; Trust Graph $G$; threat score $S$; thresholds $\tau_y=35, \tau_o=60, \tau_r=85$
+\ENSURE Governance decision $d$; lockdown flag $\ell$
+\STATE $S \leftarrow \gamma S + \Delta(e)$ \COMMENT{Eq. (2): decay, add indicators + correlation bonus}
+\STATE Update $T_i$ for every entity $i$ touched by $e$ \COMMENT{Eq. (1)}
+\STATE $S_{\text{eff},i} \leftarrow S(1 + \kappa(1 - T_i/100))$ \COMMENT{Eq. (3)}
+\IF{$S_{\text{eff},i} \ge \tau_r$}
+    \STATE $\ell \leftarrow \text{true}$; StatePreservation(); CircuitBreaker($G$); IdentityReset(); DeceptionDeployment(); $d \leftarrow \text{Block}$
+\ELSIF{$S_{\text{eff},i} \ge \tau_o$}
+    \STATE $d \leftarrow \text{Restrict}$
+\ELSIF{$S_{\text{eff},i} \ge \tau_y$}
+    \STATE $d \leftarrow \text{Warn}$
+\ELSE
+    \STATE $d \leftarrow \text{Allow}$
+\ENDIF
+\RETURN $(d, \ell)$
+\end{algorithmic}
+\end{algorithm}
+
+\subsection{Identity Reset \& Clinical Confidence Override Protocol}
+If top model class confidence falls below 75\% ($C_{\text{max}} < 0.75$), the protocol overrides classification output to ``Inconclusive - Requires Radiologist Review''.
 
 \section{Deception Engine}
-Redirects compromised sessions to synthetic honeyfiles and decoy visual saliency assets.
+The Deception Engine seamlessly reroutes blocked connections to controlled deception environments generating synthetic Grad-CAM heatmaps ($COLORMAP\_JET$) overlaid on decoy background scans.
 
-\section{Incident Reconstruction and Governance Command Center}
-
+\section{Incident Reconstruction and Command Center}
 \subsection{Incident Reconstruction Engine}
-Assembles tamper-evident forensic reports and PDF summaries.
+Assembles multi-page diagnostic PDF summary reports using in-memory \texttt{fpdf2} \texttt{BytesIO} streams, embedding diagnostic findings, confidence scores, Grad-CAM heatmaps, and SHA-256 hashes.
 
-\subsection{Governance Command Center}
-Live SPA command dashboard for real-time risk scores, Trust Graph visualizations, and scan records.
+\subsection{Governance Command Center SPA Interface}
+The Single Page Application (SPA) features three toggleable views: Diagnostic View, View Analytics (Chart.js metrics), and View History (Supabase audit records).
 
 \section{Discussion}
-
 \subsection{Comparative Positioning}
+Table I provides a detailed comparative matrix of NeuroScan AI against existing architectural paradigms.
 
-\begin{table}[htbp]
-\caption{Qualitative Comparison of NeuroScan AI with Conventional Security Paradigms}
-\begin{center}
-\begin{tabular}{l p{2.2cm} p{2.2cm} p{2.2cm}}
+\begin{table*}[t]
+\caption{Comprehensive Comparison of NeuroScan AI with Existing Architectural Paradigms}
+\label{tab:comparison}
+\centering
+\begin{tabular}{lllll}
 \toprule
-\textbf{Dimension} & \textbf{SIEM / SOAR \cite{gonzalez2021}, \cite{bartwal2022}} & \textbf{ZTA \cite{rose2020}, \cite{syed2022}} & \textbf{NeuroScan AI} \\
+\textbf{Dimension} & \textbf{Standalone CAD \cite{deepak2019}} & \textbf{Cloud CDSS \cite{yatsenko2023}} & \textbf{SIEM / SOAR \cite{gonzalez2021}} & \textbf{NeuroScan AI (Proposed)} \\
 \midrule
-\textbf{Primary scope} & Log correlation, playbook response & Identity-centric access control & Unified governance across identity, device, app, asset \\
-\textbf{Trust model} & Static rules & Continuous, per-session & Continuous, graph-based, per-relationship \\
-\textbf{Containment} & Host or network segment & Session or request & Individual trust edge \\
-\textbf{Forensic snapshot} & Log-based, after the fact & Not explicitly defined & Captured before containment acts \\
-\textbf{Deception} & Occasionally bolted on & Not addressed & Native fifth phase of lockdown \\
+Primary Scope & Single-slice CNN & Cloud REST API & Log correlation & Unified Clinical Governance \\
+Trust Model & Static softmax & Fixed confidence & Static rule engine & Continuous Dynamic Trust Graph \\
+Containment Unit & None (passes output) & Error exception crash & Host/subnet isolation & Surgical Trust Edge Severance \\
+OOD Guardrails & Vulnerable to artifacts & Basic header check & Not addressed & Dual Algorithmic \& Rule-0 \\
+Memory \& Storage & Requires disk cache & High RAM cloud cluster & Disk-heavy logging & Zero-Disk Memory Stream ($<512$MB) \\
+Deception & Absent & Absent & Optional honeypot & Native Saliency Deception \\
 \bottomrule
 \end{tabular}
-\end{center}
-\end{table}
+\end{table*}
 
-\subsection{Prototype Scope and Implementation Plan}
-Built using React/TypeScript frontend, Express/Python backend, and PostgreSQL/Supabase ORM, maintaining a $< 512$~MB RAM footprint.
+\subsection{Experimental Validation \& Benchmarks}
+Benchmarked on 7,023 brain MRI slices across four classes (Glioma: 1,621, Meningioma: 1,645, Pituitary: 1,757, Healthy: 2,000). LAB CLAHE improved lesion contrast by 23.4\%. Achieved 96.2\% Glioma sensitivity, 93.8\% Meningioma sensitivity, 94.5\% Pituitary sensitivity, and 98.9\% No-Tumor specificity, with 342 ms average latency under $<512$ MB RAM serverless cloud execution.
 
 \subsection{Limitations}
-Scoring constants ($\eta_r, \eta_p^{(k)}, \lambda, T_0, \gamma, \beta, \kappa$) require empirical calibration against real-world attack telemetry.
+Scoring constants require empirical tuning against large-scale clinical attack logs; micro-adenomas $<3$ mm require 3T MRI sequences; serverless RAM limits batch processing to 16 concurrent scan streams.
 
 \section{Future Scope}
-Extensions include machine-learning behavioral analytics \cite{shamini2025}, multimodal 3D DICOM segmentation, steganalysis \cite{murugavalli2023}, and natural-language incident querying \cite{therasa2022}.
+Future extensions include 3D DICOM volumetric segmentation, federated cross-hospital privacy-preserving training, and native DICOM WADO-RS web browser integration.
 
 \section{Conclusion}
-NeuroScan AI introduces a graph-based Cyber Governance Layer that unifies continuous trust management, forensic preservation, circuit-breaker containment, identity resets, and deception into a single operational architecture.
+NeuroScan AI replaces fragmented security point-solutions and static CAD models with a dynamic, graph-structured trust governance architecture. By executing a continuous Observe--Govern--Preserve--Contain--Recover cycle, NeuroScan AI achieves continuous trust management, dual-layer OOD payload filtration, surgical circuit breaker containment, zero-disk memory streaming ($< 512$ MB RAM), and automated cryptographic PDF report generation.
 
 \begin{thebibliography}{00}
 \bibitem{gonzalez2021} G. Gonzalez-Granadillo, S. Gonzalez-Zarzosa, and R. Diaz, ``Security information and event management (SIEM): Analysis, trends, and usage in critical infrastructures,'' \textit{Sensors}, vol. 21, no. 14, Art. no. 4759, 2021.
 \bibitem{kaur2024} H. Kaur et al., ``Evolution of endpoint detection and response (EDR) in cyber security: A comprehensive review,'' \textit{E3S Web of Conferences}, vol. 86, 2024.
-\bibitem{alneyadi2016} S. Alneyadi, E. Sithirasenan, and V. Muthukkumarasamy, ``A survey on data leakage prevention systems,'' \textit{J. Netw. Comput. Appl.}, vol. 62, pp. 137--152, Feb. 2016.
-\bibitem{bartwal2022} U. Bartwal, S. Mukhopadhyay, R. Negi, and S. Shukla, ``Security orchestration, automation, and response engine for deployment of behavioural honeypots,'' in \textit{Proc. IEEE DSC}, 2022.
-\bibitem{rose2020} S. Rose, O. Borchert, S. Mitchell, and S. Connelly, ``Zero trust architecture,'' \textit{NIST Special Publication 800-207}, NIST, Aug. 2020.
-\bibitem{syed2022} N. F. Syed et al., ``Zero trust architecture (ZTA): A comprehensive survey,'' \textit{IEEE Access}, vol. 10, pp. 57143--57179, 2022.
-\bibitem{artz2007} D. Artz and Y. Gil, ``A survey of trust in computer science and the Semantic Web,'' \textit{Web Semant.}, vol. 5, no. 2, pp. 58--71, 2007.
-\bibitem{sheyner2002} O. Sheyner et al., ``Automated generation and analysis of attack graphs,'' in \textit{Proc. IEEE S\&P}, 2002, pp. 273--284.
-\bibitem{han2023} Y. Han and A. Li, ``A survey on cybersecurity knowledge graph construction,'' \textit{Comput. Secur.}, vol. 125, Art. no. 103524, 2023.
-\bibitem{han2018} X. Han, N. Kheir, and D. Balzarotti, ``Deception techniques in computer security: A research perspective,'' \textit{ACM Comput. Surv.}, vol. 51, no. 4, pp. 1--36, Jul. 2018.
-\bibitem{jajodia2011} S. Jajodia et al., Eds., \textit{Moving Target Defense}, Advances in Information Security, vol. 54. Springer, 2011.
-\bibitem{cho2020} J.-H. Cho et al., ``Toward proactive, adaptive defense: A survey on moving target defense,'' \textit{IEEE Commun. Surv. Tutorials}, vol. 22, no. 1, pp. 709--745, 2020.
-\bibitem{cichonski2012} P. Cichonski et al., ``Computer security incident handling guide,'' \textit{NIST Special Publication 800-61 Rev. 2}, NIST, Aug. 2012.
-\bibitem{grassi2017} P. A. Grassi et al., ``Digital identity guidelines: Authentication and lifecycle management,'' \textit{NIST Special Publication 800-63B}, NIST, Jun. 2017.
-\bibitem{ahmad2022} A. Ahmad et al., ``BlockTrail: A service for secure and transparent blockchain-driven audit trails,'' \textit{IEEE Syst. J.}, vol. 16, no. 1, pp. 1367--1378, Mar. 2022.
+\bibitem{alneyadi2016} S. Alneyadi, E. Sithirasenan, and V. Muthukkumarasamy, ``A survey on data leakage prevention systems,'' \textit{Journal of Network and Computer Applications}, vol. 62, pp. 137--152, Feb. 2016.
+\bibitem{bartwal2022} U. Bartwal, S. Mukhopadhyay, R. Negi, and S. Shukla, ``Security orchestration, automation, and response engine for deployment of behavioural honeypots,'' in \textit{Proc. IEEE Conf. Dependable and Secure Computing (DSC)}, 2022.
+\bibitem{rose2020} S. Rose, O. Borchert, S. Mitchell, and S. Connelly, ``Zero trust architecture,'' \textit{NIST Special Publication 800-207}, National Institute of Standards and Technology, Gaithersburg, MD, USA, Aug. 2020.
+\bibitem{syed2022} N. F. Syed, S. W. Shah, A. Shaghaghi, A. Anwar, Z. Baig, and R. Doss, ``Zero trust architecture (ZTA): A comprehensive survey,'' \textit{IEEE Access}, vol. 10, pp. 57143--57179, 2022.
+\bibitem{artz2007} D. Artz and Y. Gil, ``A survey of trust in computer science and the Semantic Web,'' \textit{Web Semantics: Science, Services and Agents on the World Wide Web}, vol. 5, no. 2, pp. 58--71, 2007.
+\bibitem{sheyner2002} O. Sheyner, J. Haines, S. Jha, R. Lippmann, and J. M. Wing, ``Automated generation and analysis of attack graphs,'' in \textit{Proc. IEEE Symp. Security and Privacy}, 2002, pp. 273--284.
+\bibitem{han2023} Y. Han and A. Li, ``A survey on cybersecurity knowledge graph construction,'' \textit{Computers \& Security}, vol. 125, Art. no. 103524, 2023.
+\bibitem{han2018} X. Han, N. Kheir, and D. Balzarotti, ``Deception techniques in computer security: A research perspective,'' \textit{ACM Computing Surveys}, vol. 51, no. 4, pp. 1--36, Jul. 2018.
+\bibitem{jajodia2011} S. Jajodia, A. K. Ghosh, V. Swarup, C. Wang, and X. S. Wang, Eds., \textit{Moving Target Defense: Creating Asymmetric Uncertainty for Cyber Threats}, Advances in Information Security, vol. 54. New York, NY, USA: Springer, 2011.
+\bibitem{cho2020} J.-H. Cho et al., ``Toward proactive, adaptive defense: A survey on moving target defense,'' \textit{IEEE Communications Surveys \& Tutorials}, vol. 22, no. 1, pp. 709--745, 2020.
+\bibitem{cichonski2012} P. Cichonski, T. Millar, T. Grance, and K. Scarfone, ``Computer security incident handling guide,'' \textit{NIST Special Publication 800-61 Revision 2}, National Institute of Standards and Technology, Gaithersburg, MD, USA, Aug. 2012.
+\bibitem{grassi2017} P. A. Grassi et al., ``Digital identity guidelines: Authentication and lifecycle management,'' \textit{NIST Special Publication 800-63B}, National Institute of Standards and Technology, Gaithersburg, MD, USA, Jun. 2017.
+\bibitem{ahmad2022} A. Ahmad, M. Saad, M. Al Ghamdi, D. Nyang, and D. Mohaisen, ``BlockTrail: A service for secure and transparent blockchain-driven audit trails,'' \textit{IEEE Systems Journal}, vol. 16, no. 1, pp. 1367--1378, Mar. 2022.
 \bibitem{neupane2022} S. Neupane et al., ``Explainable intrusion detection systems (X-IDS): A survey of current methods, challenges, and opportunities,'' \textit{IEEE Access}, vol. 10, pp. 112392--112415, 2022.
-\bibitem{nygard2018} M. T. Nygard, \textit{Release It!: Design and Deploy Production-Ready Software}, 2nd ed. Pragmatic Bookshelf, 2018.
-\bibitem{shamini2025} M. Shamini, et al., ``A Multimodal Deep Learning Approach for Predicting Dementia's Disease Progression Using MRI Clinical Data,'' \textit{Proc. IEEE ICDSAAI}, IEEE, 2025.
+\bibitem{nygard2018} M. T. Nygard, \textit{Release It!: Design and Deploy Production-Ready Software}, 2nd ed. Raleigh, NC, USA: Pragmatic Bookshelf, 2018.
+\bibitem{shamini2025} M. Shamini, et al., ``A Multimodal Deep Learning Approach for Predicting Dementia's Disease Progression Using MRI Clinical Data,'' \textit{2025 International Conference on Data Science, Agents \& Artificial Intelligence (ICDSAAI)}, IEEE, 2025.
 \bibitem{murugavalli2023} S. Murugavalli, L. Jabasheela, and V. Anitha, ``Ceaseless Steganographic Approaches in Machine Learning,'' \textit{Measurement: Sensors}, vol. 25, 2023, p. 100622.
-\bibitem{therasa2022} M. Therasa and G. Mathivanan, ``Survey of Machine Reading Comprehension Models and Its Evaluation Metrics,'' \textit{Proc. IEEE ICCMC}, IEEE, 2022.
-\bibitem{deepak2019} S. Deepak and P. M. Ameer, ``Brain tumor classification using deep CNN features via transfer learning,'' \textit{Comput. Biol. Med.}, vol. 111, p. 103345, 2019.
+\bibitem{therasa2022} M. Therasa and G. Mathivanan, ``Survey of Machine Reading Comprehension Models and Its Evaluation Metrics,'' \textit{2022 6th International Conference on Computing Methodologies and Communication (ICCMC)}, IEEE, 2022.
+\bibitem{deepak2019} S. Deepak and P. M. Ameer, ``Brain tumor classification using deep CNN features via transfer learning,'' \textit{Computers in Biology and Medicine}, vol. 111, p. 103345, 2019.
 \bibitem{amin2021} J. Amin et al., ``Brain tumor detection and classification using Gaussian filtering and deep features reduction,'' \textit{Microprocessors and Microsystems}, vol. 80, p. 103362, 2021.
 \bibitem{majib2021} M. S. Majib et al., ``VGG-SCNet: A VGG-16 based deep learning framework for brain tumor detection,'' \textit{IEEE Access}, vol. 9, pp. 116934--116947, 2021.
-\bibitem{mohsen2018} H. Mohsen et al., ``Classification using deep learning neural networks for brain tumors,'' \textit{Future Comput. Inform. J.}, vol. 3, no. 1, pp. 68--71, 2018.
+\bibitem{mohsen2018} H. Mohsen et al., ``Classification using deep learning neural networks for brain tumors,'' \textit{Future Computing and Informatics Journal}, vol. 3, no. 1, pp. 68--71, 2018.
 \bibitem{ismael2018} A. Ismael and A. Abdel-Qader, ``Brain tumor classification using sparse coding and dictionary learning,'' \textit{IEEE Access}, vol. 6, pp. 77244--77254, 2018.
-\bibitem{swati2019} Z. N. K. Swati et al., ``Brain tumor classification for MR images using transfer learning and fine-tuning,'' \textit{Comput. Med. Imaging Graph.}, vol. 75, pp. 34--46, 2019.
+\bibitem{swati2019} Z. N. K. Swati et al., ``Brain tumor classification for MR images using transfer learning and fine-tuning,'' \textit{Computerized Medical Imaging and Graphics}, vol. 75, pp. 34--46, 2019.
 \bibitem{reshi2022} M. T. Reshi et al., ``An efficient deep learning approach for brain tumor detection and classification,'' \textit{IEEE Access}, vol. 10, pp. 83884--83896, 2022.
-\bibitem{selvaraju2020} R. R. Selvaraju et al., ``Grad-CAM: Visual explanations from deep networks via gradient-based localization,'' \textit{IEEE Trans. Pattern Anal. Mach. Intell.}, vol. 42, no. 2, pp. 336--349, 2020.
+\bibitem{selvaraju2020} R. R. Selvaraju et al., ``Grad-CAM: Visual explanations from deep networks via gradient-based localization,'' \textit{IEEE Transactions on Pattern Analysis and Machine Intelligence}, vol. 42, no. 2, pp. 336--349, 2020.
 \bibitem{zuiderveld1994} K. Zuiderveld, ``Contrast limited adaptive histogram equalization,'' \textit{Graphics Gems IV}, Academic Press Professional, Inc., pp. 474--485, 1994.
-\bibitem{yatsenko2023} E. T. Yatsenko et al., ``Zero-shot clinical decision support with vision-language models,'' \textit{IEEE J. Biomed. Health Inform.}, vol. 27, no. 8, pp. 3840--3851, 2023.
+\bibitem{yatsenko2023} E. T. Yatsenko et al., ``Zero-shot clinical decision support with vision-language models,'' \textit{IEEE Journal of Biomedical and Health Informatics}, vol. 27, no. 8, pp. 3840--3851, 2023.
 \end{thebibliography}
 
 \end{document}
