@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Brain-tumor Detection</title>
+    <!-- Modern Typography from Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Chart.js CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+    <!-- Clinical Boot Splash Screen -->
+    <div id="splash-screen">
+        <div class="splash-icon">
+            <i class="fa-solid fa-brain-circuit"></i>
+        </div>
+        <h1 class="splash-title">Brain-tumor Detection</h1>
+        <p class="splash-subtitle">Hybrid CNN-Agent Triage Pipeline</p>
+        <div class="splash-progress">
+            <div class="splash-progress-fill" id="splashProgressFill"></div>
+        </div>
+        <span id="splash-status" class="splash-status">Verifying In-Memory Engine...</span>
+    </div>
+
+    <!-- Main Navigation Bar -->
+    <header class="navbar">
+        <div class="nav-brand">
+            <div class="brand-icon">
+                <i class="fa-solid fa-brain-circuit"></i>
+            </div>
+            <div class="brand-text">
+                <h1>Brain-tumor Detection</h1>
+                <span class="brand-subtitle">Hybrid CNN-Agent Triage Pipeline</span>
+            </div>
+        </div>
+        <div class="nav-controls">
+            <div class="nav-status">
+                <span class="status-pill status-online">
+                    <i class="fa-solid fa-circle-dot"></i> Pipeline Active
+                </span>
+            </div>
+            <div class="nav-actions">
+                <button class="btn btn-outline nav-btn active" id="viewDiagnosticsBtn">
+                    <i class="fa-solid fa-user-doctor"></i> Diagnostics
+                </button>
+                <button class="btn btn-outline nav-btn" id="viewAnalyticsBtn">
+                    <i class="fa-solid fa-chart-line"></i> View Analytics
+                </button>
+                <button class="btn btn-outline nav-btn" id="viewHistoryBtn">
+                    <i class="fa-solid fa-clock-rotate-left"></i> View History
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- App Container -->
+    <main class="container">
+        
+        <!-- Diagnostic Workspace Container -->
+        <div id="diagnosticView" class="diagnostic-view">
+            <!-- Primary Clinical Intake Section -->
+            <section class="intake-section">
+                <div class="card intake-card">
+                    <div class="card-header">
+                        <h2><i class="fa-solid fa-user-doctor"></i> Clinical Intake & MRI Scan Analysis</h2>
+                        <p class="card-desc">Enter patient demographics and upload brain MRI scan for automated CLAHE enhancement and Agentic AI triage.</p>
+                    </div>
+
+                    <form id="scanForm" class="intake-form">
+                        <!-- Form 1: Patient Demographics -->
+                        <div class="form-section">
+                            <h3 class="form-title"><i class="fa-solid fa-id-card"></i> Form 1: Patient Demographics</h3>
+                            <div class="form-grid">
+                                <div class="input-group">
+                                    <label for="patientName"><i class="fa-solid fa-user"></i> Patient Name</label>
+                                    <input type="text" id="patientName" name="patient_name" placeholder="e.g. John Doe" required>
+                                </div>
+                                <div class="input-group">
+                                    <label for="patientId"><i class="fa-solid fa-hashtag"></i> Patient ID / MRN</label>
+                                    <input type="text" id="patientId" name="patient_id" placeholder="e.g. MRN-98421" required>
+                                </div>
+                                <div class="input-group">
+                                    <label for="patientAge"><i class="fa-solid fa-cake-candles"></i> Age (Years)</label>
+                                    <input type="number" id="patientAge" name="age" min="1" max="120" placeholder="e.g. 45" required>
+                                </div>
+                                <div class="input-group">
+                                    <label for="patientGender"><i class="fa-solid fa-venus-mars"></i> Gender</label>
+                                    <select id="patientGender" name="gender" required>
+                                        <option value="" disabled selected>Select Gender</option>
+                                        <option value="Male">Male</option>
+                                        <option value="Female">Female</option>
+                                        <option value="Other">Other</option>
+                                    </select>
+                                </div>
+                                <div class="input-group full-width">
+                                    <label for="referringDoctor"><i class="fa-solid fa-user-md"></i> Referring Doctor</label>
+                                    <input type="text" id="referringDoctor" name="referring_doctor" placeholder="e.g. Dr. Sarah Jenkins, MD" required>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Form 2: MRI Scan Uploader -->
+                        <div class="form-section">
+                            <h3 class="form-title"><i class="fa-solid fa-file-medical"></i> Form 2: MRI Scan File Intake</h3>
+                            <div class="dropzone" id="dropzone">
+                                <input type="file" id="fileInput" name="file" accept="image/*" required hidden>
+                                <div class="dropzone-content" id="dropzoneContent">
+                                    <div class="dropzone-icon">
+                                        <i class="fa-solid fa-cloud-arrow-up"></i>
+                                    </div>
+                                    <div class="dropzone-text">
+                                        <p><strong>Drag & Drop MRI Scan</strong> or <span class="browse-btn">Browse File</span></p>
+                                        <span class="file-limits">Supports JPG, PNG, BMP, TIFF, WEBP (Universal Format Normalizer)</span>
+                                    </div>
+                                </div>
+                                <div class="file-preview-tag hidden" id="filePreviewTag">
+                                    <i class="fa-solid fa-file-image"></i>
+                                    <span id="fileNameDisplay">scan.jpg</span>
+                                    <button type="button" class="remove-file-btn" id="removeFileBtn"><i class="fa-solid fa-xmark"></i></button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Submit Action Button -->
+                        <div class="form-actions">
+                            <button type="submit" class="btn btn-primary btn-large" id="submitBtn">
+                                <span id="btnText"><i class="fa-solid fa-wand-magic-sparkles"></i> Analyse</span>
+                                <span id="btnSpinner" class="spinner hidden"><i class="fa-solid fa-circle-notch fa-spin"></i> Processing Memory Stream...</span>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </section>
+
+            <!-- Diagnostic Results Section (Printable & Dynamic) -->
+            <section id="resultsSection" class="results-section hidden">
+                <div class="card results-card" id="printableCard">
+                    <div class="card-header results-header">
+                        <div>
+                            <h2><i class="fa-solid fa-square-poll-vertical"></i> AI Diagnostic Assessment & Visual Saliency</h2>
+                            <span class="report-id" id="resultReportId">Report ID: --</span>
+                        </div>
+                        <div class="no-print action-buttons-top">
+                            <button class="btn btn-secondary" id="downloadPdfBtn"><i class="fa-solid fa-file-pdf"></i> Download Medical Report</button>
+                            <button class="btn btn-outline" id="printReportBtn"><i class="fa-solid fa-print"></i> Print Report</button>
+                        </div>
+                    </div>
+
+                    <!-- OOD Guardrail Status Banner -->
+                    <div id="guardrailBanner" class="guardrail-banner valid">
+                        <div class="banner-icon"><i class="fa-solid fa-shield-check"></i></div>
+                        <div class="banner-text">
+                            <h4 id="bannerTitle">MRI Scan Validation Passed</h4>
+                            <p id="bannerDesc">Image confirmed as valid human cranial MRI. Out-of-Distribution (OOD) check passed.</p>
+                        </div>
+                    </div>
+
+                    <!-- Main Diagnostic Details Grid -->
+                    <div class="results-body">
+                        <!-- Image Saliency Comparison Columns -->
+                        <div class="visual-comparison">
+                            <div class="img-box">
+                                <span class="img-badge">CLAHE Enhanced (OpenCV)</span>
+                                <img id="claheImg" src="" alt="CLAHE Enhanced MRI">
+                            </div>
+                            <div class="img-box">
+                                <span class="img-badge badge-gradcam">Grad-CAM Saliency Overlay</span>
+                                <img id="gradcamImg" src="" alt="Grad-CAM Saliency Heatmap">
+                            </div>
+                        </div>
+
+                        <!-- Clinical Findings Content -->
+                        <div class="findings-panel">
+                            <!-- Patient Mini Summary Box -->
+                            <div class="patient-mini-box">
+                                <div><strong>Patient:</strong> <span id="resPatientName">--</span> (<span id="resPatientId">--</span>)</div>
+                                <div><strong>Age/Gender:</strong> <span id="resPatientAgeGender">--</span></div>
+                                <div><strong>Ref. Doctor:</strong> <span id="resDoctor">--</span></div>
+                            </div>
+
+                            <!-- Diagnosis Badge & Confidence -->
+                            <div class="diagnosis-summary-box">
+                                <div class="diag-title-row">
+                                    <span class="diag-label">Tumor Classification:</span>
+                                    <span class="diag-badge" id="classificationBadge">--</span>
+                                </div>
+                                <div class="confidence-box">
+                                    <div class="confidence-header">
+                                        <span>CNN Confidence Score:</span>
+                                        <strong id="confidenceText">0.0%</strong>
+                                    </div>
+                                    <div class="progress-bar-bg">
+                                        <div class="progress-bar-fill" id="confidenceBar" style="width: 0%;"></div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Clinical Rationale -->
+                            <div class="rationale-box">
+                                <h3><i class="fa-solid fa-microscope"></i> Clinical Rationale & Saliency Evidence</h3>
+                                <p id="clinicalRationaleText">--</p>
+                            </div>
+
+                            <!-- Associated Symptoms -->
+                            <div class="symptoms-box">
+                                <h3><i class="fa-solid fa-clipboard-list"></i> Associated Physiological Symptoms</h3>
+                                <ul id="symptomsList" class="symptoms-list">
+                                    <!-- Dynamic symptom pills -->
+                                </ul>
+                            </div>
+
+                            <!-- Recommended Treatment Protocol -->
+                            <div class="treatment-box">
+                                <h3><i class="fa-solid fa-notes-medical"></i> Recommended Oncology Treatment Pathway</h3>
+                                <p id="treatmentPathwayText">--</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+
+        <!-- Dedicated Analytics Dashboard View Container -->
+        <div id="analyticsView" class="analytics-view hidden">
+            <div class="card-header flex-header" style="margin-bottom: 20px;">
+                <h2><i class="fa-solid fa-chart-line"></i> Clinical Analytics Dashboard</h2>
+                <button class="btn btn-sm btn-outline back-to-diag-btn"><i class="fa-solid fa-arrow-left"></i> Back to Diagnostics</button>
+            </div>
+
+            <!-- Dashboard Analytics Grid (CSS Grid) -->
+            <section class="dashboard-grid">
+                <!-- Left Column: Summary Cards Vertical Stack -->
+                <div class="metrics-cards">
+                    <div class="metric-card">
+                        <div class="metric-icon blue"><i class="fa-solid fa-folder-open"></i></div>
+                        <div class="metric-info">
+                            <span class="metric-label">Total Scans</span>
+                            <h3 id="stat-total" class="metric-value">0</h3>
+                        </div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-icon green"><i class="fa-solid fa-circle-check"></i></div>
+                        <div class="metric-info">
+                            <span class="metric-label">Valid Brain MRIs</span>
+                            <h3 id="stat-valid" class="metric-value">0</h3>
+                        </div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-icon red"><i class="fa-solid fa-triangle-exclamation"></i></div>
+                        <div class="metric-info">
+                            <span class="metric-label">OOD Rejections</span>
+                            <h3 id="stat-rejected" class="metric-value">0</h3>
+                        </div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-icon purple"><i class="fa-solid fa-disease"></i></div>
+                        <div class="metric-info">
+                            <span class="metric-label">Tumor Detections</span>
+                            <h3 id="stat-tumors" class="metric-value">0</h3>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right Column: Chart Container Panel -->
+                <div class="chart-card">
+                    <div class="card-header">
+                        <h2><i class="fa-solid fa-chart-column"></i> Triage Distribution Analytics</h2>
+                        <span class="badge">LIVE SUPABASE DATA</span>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="triageChart"></canvas>
+                    </div>
+                </div>
+            </section>
+        </div>
+
+        <!-- Scan History Table View (Dedicated Hidden Section) -->
+        <section class="history-section hidden" id="historySection">
+            <div class="card">
+                <div class="card-header flex-header">
+                    <h2><i class="fa-solid fa-clock-rotate-left"></i> Historical Patient Scan Records</h2>
+                    <div class="history-header-actions">
+                        <button class="btn btn-sm btn-outline back-to-diag-btn"><i class="fa-solid fa-arrow-left"></i> Back to Diagnostics</button>
+                        <button class="btn btn-sm btn-outline" id="refreshHistoryBtn"><i class="fa-solid fa-rotate"></i> Refresh</button>
+                    </div>
+                </div>
+                <div class="table-responsive">
+                    <table class="history-table">
+                        <thead>
+                            <tr>
+                                <th>Scan ID</th>
+                                <th>Patient Name</th>
+                                <th>ID / MRN</th>
+                                <th>Ref. Doctor</th>
+                                <th>Validation</th>
+                                <th>Classification</th>
+                                <th>Confidence</th>
+                                <th>Date</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="historyTableBody">
+                            <tr>
+                                <td colspan="9" class="text-center">Loading scan history...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <p>IEEE Project: <strong>ieeeproject</strong> | Hybrid CNN-Agent Brain Tumor Detection & Clinical Decision Support System</p>
+    </footer>
+
+    <script src="app.js"></script>
+</body>
+</html>
