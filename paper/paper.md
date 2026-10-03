@@ -127,16 +127,6 @@ If top class confidence falls below 75% ($C_{\text{max}} < 0.75$), the engine ov
 
 6. Zero-Disk Report Generation & Telemetry Persistence: Generates a multi-page clinical PDF report using in-memory `fpdf2` `BytesIO` streams, embedding diagnostic findings, confidence scores, Grad-CAM heatmaps, and cryptographic SHA-256 hashes before logging telemetry asynchronously to a Supabase database.
 
-┌────────────────────────────────────────────────────────────────────────┐
-│               Image Pre-Processing & Inference Pipeline                │
-│                                                                        │
-│ Raw Upload ──> Universal Normalizer ──> Algorithmic Pre-Filter        │
-│                                                   │ (Pass)             │
-│                                                   ▼                    │
-│ FPDF Report <── Med-CoT Engine <── CNN Classifier <── LAB CLAHE        │
-└────────────────────────────────────────────────────────────────────────┘
-Fig. 3. End-to-end image pre-processing, OOD filtration, CLAHE enhancement, and inference pipeline.
-
 ---
 
 ## IV. GOVERNANCE ENGINE AND DYNAMIC TRUST GRAPH
@@ -174,7 +164,7 @@ The system models enterprise relationships as a directed graph $G = (V, E, W)$, 
 │                                                      ▼                 │
 │   [Asset Node: MRI DB] <──(T=75, Monitored)── [App Node: NeuroScan]    │
 └────────────────────────────────────────────────────────────────────────┘
-Fig. 4. Dynamic Trust Graph topology illustrating scored edges connecting User, Device, Application, and Asset nodes.
+Fig. 3. Dynamic Trust Graph topology illustrating scored edges connecting User, Device, Application, and Asset nodes.
 
 D. Enterprise Access Manager (EAM)
 The Enterprise Access Manager (EAM) enforces Role-Based Access Control (RBAC) policies across clinical roles (e.g., Senior Radiologist, Attending Physician, Research Intern). If an entity attempts an unauthorized operation (e.g., an intern requesting bulk raw DICOM exfiltration), the EAM generates a policy violation event $k \in E_i(t)$, which feeds directly into Equation (7) to reduce the entity's trust score.
